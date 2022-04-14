@@ -1,0 +1,21 @@
+org: chauchuty
+app: aws-medcloud
+service: aws-medcloud
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: sa-east-1
+
+functions:
+  api:
+    handler: handler.patient
+    events:
+      - http:
+          path: /api/patient
+          method: get
+          cors: true
+          credentials: true
+plugins:
+  - serverless-offline
