@@ -12,10 +12,7 @@ functions:
   api:
     handler: handler.patient
     events:
-      - http:
-          path: /api/patient
-          method: get
-          cors: true
-          credentials: true
+      -  httpApi: '*'
+      
 plugins:
   - serverless-offline

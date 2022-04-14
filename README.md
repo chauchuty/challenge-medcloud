@@ -8,14 +8,14 @@
 
 :o: In the front-end you MUST use React.
 
-:o: In the back-end you MUST use Node.js and AWS free-tier.
+:white_check_mark: In the back-end you MUST use Node.js and AWS free-tier.
 
-:o: The patient data should not be static or local.
+:white_check_mark: The patient data should not be static or local.
 
-:o: Field validation (date, required fields, etc)
+:white_check_mark: Field validation (date, required fields, etc)
 
-:o: AWS RDS MySQL, PostgreSQL or DynamoDB as database.
+:white_check_mark: AWS RDS MySQL, PostgreSQL or DynamoDB as database.
 
-:o: AWS Lambda for serveless computing.
+:white_check_mark: AWS Lambda for serveless computing.
 
-:o: AWS API Gateway for managing your REST API.
+:white_check_mark: AWS API Gateway for managing your REST API.
