@@ -14,9 +14,13 @@ class Patient {
   ) {
     this.id = id;
     this.name = name;
-    this.birth_date = new Date(birth_date);
+    this.birth_date = birth_date;
     this.email = email;
     this.address = address;
+  }
+
+  static isEmpty() {
+    return new Patient(0, "", new Date(), "", "");
   }
 }
 

@@ -1,11 +1,9 @@
-import React from "react";
-import RoutesCustom from "./pages/routes";
+import React, { useState } from "react";
+import PatientsPage from "./pages/patients.page";
 
 function App() {
   return (
-    <div>
-      <RoutesCustom />
-    </div>
+    <PatientsPage />
   );
 }
 
