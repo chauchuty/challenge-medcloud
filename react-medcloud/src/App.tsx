@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import PatientsPage from "./pages/patients.page";
+
 
 function App() {
   return (
-    <PatientsPage />
+    <React.StrictMode>
+      <PatientsPage />
+    </React.StrictMode>
   );
 }
 

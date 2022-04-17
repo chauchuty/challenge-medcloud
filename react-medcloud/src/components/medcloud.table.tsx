@@ -1,88 +1,89 @@
-import { Button, Spinner, Table } from "react-bootstrap";
-import MedCloudModal from "./medcloud.editModal";
-import { useEffect } from 'react';
+import moment from "moment";
+import { useState, useEffect } from "react";
+import { Table } from "react-bootstrap";
+import Patient from "../models/patient.model";
+import PatientService from "../service/patients.service";
+import MedCloudSpinner from "./medcloud.spinner";
+import Button from "react-bootstrap/Button";
+import MedCloudModal from "./medcloud.modal";
 
-function MedCloudTable(props: {
-  columns: any[];
-  rows: any[];
-  hasAction: boolean;
-  show: boolean;
-  setShow: any;
-  setPatient: any;
-}) {
+function MedCloudTable() {
+  const [show, setShow] = useState(false);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [patient, setPatient] = useState<Patient>(Patient.empty());
+  const service = new PatientService();
 
-  const handleEdit = (row: any) => {
-    props.setPatient(row);
-    props.setShow(!props.show);
+  useEffect(() => {
+    if (show === false) {
+      setPatients([]);
+      service.getAll().then((response: any) => {
+        setPatients(response.data);
+      });
+    }
+  }, [show]);
+
+  const handleEdit = (patient: Patient) => {
+    setPatient(patient);
+    setShow(true);
   };
 
-  const handleDelete = (row: any) => {
-    console.log(row);
+  const handleDelete = (patient: Patient) => {
+    console.log(patient);
   };
 
   return (
     <>
-      {}
       <Table>
         <thead>
           <tr>
-            {props.columns.map((column) => (
-              <th key={column.field}>{column.label}</th>
-            ))}
+            <th>#</th>
+            <th>Nome</th>
+            <th>Data Nascimento</th>
+            <th>Email</th>
+            <th>Endereço</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
-          {props.rows.length == 0 ? (
+          {patients.length > 0 ? (
+            patients.map((patient: Patient, index: number) => {
+              return (
+                <tr key={index}>
+                  <td>{index}</td>
+                  <td>{patient.name}</td>
+                  <td>{moment(patient.birth_date).format("DD/MM/YYYY")}</td>
+                  <td>{patient.email}</td>
+                  <td>{patient.address}</td>
+                  <td>
+                    <Button
+                      onClick={() => handleEdit(patient)}
+                      variant="secondary"
+                      size="sm"
+                      className="me-1"
+                    >
+                      Editar
+                    </Button>
+                    <Button
+                      onClick={() => handleDelete(patient)}
+                      variant="danger"
+                      size="sm"
+                    >
+                      Excluir
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
             <tr>
-              <td
-                colSpan={props.columns.length}
-                style={{ textAlign: "center" }}
-              >
-                <Spinner animation="grow" variant="info" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
+              <td colSpan={6} className="text-center">
+                <MedCloudSpinner type="primary" />
               </td>
             </tr>
-          ) : (
-            props.rows.map(
-              (row) => (
-                props.hasAction ? (
-                  Object.assign(row, {
-                    actions: (
-                      <>
-                        <Button
-                          className="me-2"
-                          size="sm"
-                          variant="warning"
-                          onClick={() => handleEdit(row)}
-                        >
-                          Editar
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="danger"
-                          onClick={() => handleDelete(row)}
-                        >
-                          Delete
-                        </Button>
-                      </>
-                    ),
-                  })
-                ) : (
-                  <></>
-                ),
-                (
-                  <tr key={row.id}>
-                    {props.columns.map((column, index) => (
-                      <td key={column.field + index}>{row[column.field]}</td>
-                    ))}
-                  </tr>
-                )
-              )
-            )
           )}
         </tbody>
       </Table>
+      <MedCloudModal patient={patient} show={show} setShow={setShow} />
     </>
   );
 }

@@ -1,21 +1,17 @@
-import axios from "axios";
+import axios from 'axios'
 import moment from 'moment'
-import Patient from "../models/patient.model";
+import Patient from '../models/patient.model';
 
-class PatientsService {
-  async getAll() {
-    return await fetch("http://localhost:5000/api/patients");
-  }
+class PatientService {
+    private API_URL = 'http://localhost:5000/api/patients';
 
-  async update(patient: Patient) {
+    getAll(){
+        return axios.get(`${this.API_URL}`);
+    }
 
-    return await axios.put("http://localhost:5000/api/patients/" + patient.id, {
-      name: patient.name,
-      birth_date: moment(patient.birth_date).format('yyyy-MM-DD'),
-      email: patient.email,
-      address: patient.address,
-    });
-    
-  }
+    update(patient: Patient){
+        return axios.put(`${this.API_URL}/${patient.id}`, {...patient, birth_date: moment(patient.birth_date).format('YYYY-MM-DD')});
+    }
 }
-export default PatientsService;
+
+export default PatientService
