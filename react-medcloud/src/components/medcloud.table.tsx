@@ -7,16 +7,17 @@ import MedCloudModal from "./medcloud.modal";
 function MedCloudTable(props: { columns: any[]; service: any }) {
   const [dataList, setDataList] = useState<any[]>([]);
   const [data, setData] = useState<any>();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
 
   useEffect(() => {
     // setLoading(true);
     props.service.getAll().then((data: any) => {
       setDataList(data.data);
+      console.log(data.data)
       // setLoading(false);
     });
-  }, [show]); // Melhorar
+  }, [show]); // Melhorar com redux
 
   const handleEdit = (data: any) => {
     Object.assign(data, { title: 'Editar', mode: 'edit', fields: props.columns });
@@ -28,7 +29,6 @@ function MedCloudTable(props: { columns: any[]; service: any }) {
     Object.assign(data, { title: 'Deletar', mode: 'delete' })
     setData(data);
     setShow(true);
-    console.log(data)
   };
 
   return (
