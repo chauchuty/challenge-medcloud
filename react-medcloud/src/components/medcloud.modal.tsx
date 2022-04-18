@@ -99,7 +99,7 @@ function MedCloudModal(props: {
                 </>
               ) : (
                 <>
-                  <Button variant="primary" onClick={handleUpdate}>
+                  <Button variant="primary" onClick={handleDelete}>
                     {isLoading ? <MedCloudSpinner type="light" /> : "Deletar"}
                   </Button>
                 </>

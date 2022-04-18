@@ -11,7 +11,8 @@ function MedCloudTable(props: { columns: any[]; service: any }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    // setLoading(true);
+    
+    // setLoading(true)
     props.service.getAll().then((data: any) => {
       setDataList(data.data);
       console.log(data.data)
