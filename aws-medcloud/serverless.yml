@@ -10,7 +10,7 @@ provider:
 
 functions:
   api:
-    handler: handler.patient
+    handler: handler.patients
     events:
       -  httpApi: '*'
       

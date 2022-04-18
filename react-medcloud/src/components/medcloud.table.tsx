@@ -16,7 +16,7 @@ function MedCloudTable(props: { columns: any[]; service: any }) {
       setDataList(data.data);
       // setLoading(false);
     });
-  }, [show]); // Melhorar
+  }, [show]); // Melhorar Gerenciamento de Estado / Redux
 
   const handleEdit = (data: any) => {
     Object.assign(data, { title: 'Editar', mode: 'edit', fields: props.columns });
