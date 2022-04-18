@@ -21,7 +21,7 @@ function MedCloudModal(props: {
     props.service
       .update(props.data)
       .then((data: any) => {
-        console.log(data)
+        console.log(data);
         setIsLoading(false);
         props.setShow(false);
       })
@@ -82,7 +82,7 @@ function MedCloudModal(props: {
           {props.data?.mode === "edit" ? (
             <>
               <Button variant="primary" onClick={handleUpdate}>
-                Atualizar
+                {isLoading ? <MedCloudSpinner type="light" /> : "Atualizar"}
               </Button>
             </>
           ) : (
@@ -99,8 +99,8 @@ function MedCloudModal(props: {
                 </>
               ) : (
                 <>
-                  <Button variant="danger" onClick={handleDelete}>
-                    Deletar
+                  <Button variant="primary" onClick={handleUpdate}>
+                    {isLoading ? <MedCloudSpinner type="light" /> : "Deletar"}
                   </Button>
                 </>
               )}
