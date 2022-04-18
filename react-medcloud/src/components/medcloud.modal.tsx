@@ -1,97 +1,114 @@
-import moment from "moment";
 import { useState, useEffect } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import Patient from "../models/patient.model";
-import PatientService from "../service/patients.service";
+import MedCloudForm from "./medcloud.form";
 import MedCloudSpinner from "./medcloud.spinner";
 
 function MedCloudModal(props: {
-  patient: Patient;
-  show: boolean;
+  show: any;
   setShow: any;
+  data: any;
+  service: any;
 }) {
-  const service = new PatientService();
-  const [patient, setPatient] = useState(props.patient);
   const [isLoading, setIsLoading] = useState(false);
   const handleClose = () => props.setShow(false);
 
+  useEffect(() => {
+    console.log("<Modal>");
+  }, []);
+
   const handleUpdate = () => {
     setIsLoading(true);
-    service.update(patient).then((response: any) => {
-      setIsLoading(false);
-      props.setShow(false);
-    });
+    props.service
+      .update(props.data)
+      .then((data: any) => {
+        console.log(data)
+        setIsLoading(false);
+        props.setShow(false);
+      })
+      .catch((error: any) => {
+        setIsLoading(false);
+        console.log(error);
+      });
   };
 
-  useEffect(() => {
-    setPatient(props.patient);
-  }, [props.patient]);
+  const handleDelete = () => {
+    setIsLoading(true);
+    props.service
+      .delete(props.data)
+      .then((data: any) => {
+        setIsLoading(false);
+        props.setShow(false);
+      })
+      .catch((error: any) => {
+        setIsLoading(false);
+        console.log(error);
+      });
+  };
 
   return (
     <>
       <Modal show={props.show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Editar</Modal.Title>
+          <Modal.Title>{props.data?.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="formBasicName">
-              <Form.Label>Nome</Form.Label>
-              <Form.Control
-                type="text"
-                defaultValue={patient.name}
-                onChange={(e) =>
-                  setPatient({ ...patient, name: e.target.value })
-                }
-                required
-              />
-            </Form.Group>
+          {props.data?.mode === "edit" ? (
+            <>
+              <MedCloudForm data={props.data} />
+            </>
+          ) : (
+            <></>
+          )}
 
-            <Form.Group className="mb-3" controlId="formBasicBirthDate">
-              <Form.Label>Data Nascimento</Form.Label>
-              <Form.Control
-                type="date"
-                defaultValue={moment(props.patient.birth_date).format(
-                  "yyyy-MM-DD"
-                )}
-                required
-              />
-            </Form.Group>
+          {props.data?.mode === "delete" ? (
+            <>
+              <p>
+                Você realmente deseja deletar?{" "}
+                <b>
+                  {props.data.name} (#{props.data.id})
+                </b>
+              </p>
+            </>
+          ) : (
+            <></>
+          )}
+        </Modal.Body>
 
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                defaultValue={props.patient.email}
-                required
-              />
-            </Form.Group>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancelar
+          </Button>
 
-            <Form.Group className="mb-3" controlId="formBasicAddress">
-              <Form.Label>Endereço</Form.Label>
-              <Form.Control
-                type="text"
-                defaultValue={props.patient.address}
-                required
-              />
-            </Form.Group>
-            <div className="d-grid gap-2">
+          {props.data?.mode === "edit" ? (
+            <>
+              <Button variant="primary" onClick={handleUpdate}>
+                Atualizar
+              </Button>
+            </>
+          ) : (
+            <></>
+          )}
+
+          {props.data?.mode === "delete" ? (
+            <>
               {isLoading ? (
                 <>
-                  <Button variant="primary" size="sm">
+                  <Button variant="danger">
                     <MedCloudSpinner type="light" />
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button variant="primary" size="sm" onClick={handleUpdate}>
-                    Atualizar
+                  <Button variant="danger" onClick={handleDelete}>
+                    Deletar
                   </Button>
                 </>
               )}
-            </div>
-          </Form>
-        </Modal.Body>
+            </>
+          ) : (
+            <></>
+          )}
+        </Modal.Footer>
       </Modal>
     </>
   );

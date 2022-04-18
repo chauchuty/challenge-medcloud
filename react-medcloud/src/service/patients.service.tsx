@@ -12,6 +12,10 @@ class PatientService {
     update(patient: Patient){
         return axios.put(`${this.API_URL}/${patient.id}`, {...patient, birth_date: moment(patient.birth_date).format('YYYY-MM-DD')});
     }
+
+    delete(patient: Patient){
+        return axios.delete(`${this.API_URL}/${patient.id}`);
+    }
 }
 
 export default PatientService

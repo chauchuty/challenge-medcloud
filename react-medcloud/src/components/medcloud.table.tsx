@@ -1,34 +1,34 @@
 import moment from "moment";
 import { useState, useEffect } from "react";
-import { Table } from "react-bootstrap";
-import Patient from "../models/patient.model";
-import PatientService from "../service/patients.service";
+import { Button, Table } from "react-bootstrap";
 import MedCloudSpinner from "./medcloud.spinner";
-import Button from "react-bootstrap/Button";
 import MedCloudModal from "./medcloud.modal";
 
-function MedCloudTable() {
+function MedCloudTable(props: { columns: any[]; service: any }) {
+  const [dataList, setDataList] = useState<any[]>([]);
+  const [data, setData] = useState<any>();
+  const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const [patient, setPatient] = useState<Patient>(Patient.empty());
-  const service = new PatientService();
 
   useEffect(() => {
-    if (show === false) {
-      setPatients([]);
-      service.getAll().then((response: any) => {
-        setPatients(response.data);
-      });
-    }
-  }, [show]);
+    // setLoading(true);
+    props.service.getAll().then((data: any) => {
+      setDataList(data.data);
+      // setLoading(false);
+    });
+  }, [show]); // Melhorar
 
-  const handleEdit = (patient: Patient) => {
-    setPatient(patient);
+  const handleEdit = (data: any) => {
+    Object.assign(data, { title: 'Editar', mode: 'edit', fields: props.columns });
+    setData(data);
     setShow(true);
   };
 
-  const handleDelete = (patient: Patient) => {
-    console.log(patient);
+  const handleDelete = (data: any) => {
+    Object.assign(data, { title: 'Deletar', mode: 'delete' })
+    setData(data);
+    setShow(true);
+    console.log(data)
   };
 
   return (
@@ -36,54 +36,43 @@ function MedCloudTable() {
       <Table>
         <thead>
           <tr>
-            <th>#</th>
-            <th>Nome</th>
-            <th>Data Nascimento</th>
-            <th>Email</th>
-            <th>Endereço</th>
-            <th>Ações</th>
+            {props.columns.map((column) => (
+              <th key={column.field}>{column.label}</th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {patients.length > 0 ? (
-            patients.map((patient: Patient, index: number) => {
-              return (
-                <tr key={index}>
-                  <td>{index}</td>
-                  <td>{patient.name}</td>
-                  <td>{moment(patient.birth_date).format("DD/MM/YYYY")}</td>
-                  <td>{patient.email}</td>
-                  <td>{patient.address}</td>
+          {loading ? (
+            <>
+              <tr className="text-center">
+                <td colSpan={props.columns.length}>
+                  <MedCloudSpinner type="primary" />
+                </td>
+              </tr>
+            </>
+          ) : (
+            <>
+              {dataList.map((data: any) => (
+                <tr key={data.id}>
+                  {props.columns.map((column) => (
+                    <td key={column.field}>{data[column.field]}</td>
+                  ))}
                   <td>
-                    <Button
-                      onClick={() => handleEdit(patient)}
-                      variant="secondary"
-                      size="sm"
-                      className="me-1"
-                    >
+                    <Button variant="primary" size="sm" onClick={() => handleEdit(data)}>
                       Editar
-                    </Button>
-                    <Button
-                      onClick={() => handleDelete(patient)}
-                      variant="danger"
-                      size="sm"
-                    >
-                      Excluir
+                    </Button>{" "}
+                    <Button variant="danger" size="sm" onClick={() => handleDelete(data)}>
+                      Deletar
                     </Button>
                   </td>
+            
                 </tr>
-              );
-            })
-          ) : (
-            <tr>
-              <td colSpan={6} className="text-center">
-                <MedCloudSpinner type="primary" />
-              </td>
-            </tr>
+              ))}
+            </>
           )}
         </tbody>
       </Table>
-      <MedCloudModal patient={patient} show={show} setShow={setShow} />
+      <MedCloudModal show={show} setShow={setShow} data={data} service={props.service} />
     </>
   );
 }
