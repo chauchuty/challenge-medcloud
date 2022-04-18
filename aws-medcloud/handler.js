@@ -1,18 +1,17 @@
 const serverless = require("serverless-http");
 const express = require("express");
-const cors = require("cors");
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken')
 const mysql = require("mysql2");
 const app = express();
 
 // Settings
-app.use(cors());
 app.use(express.json());
 app.use(
   express.urlencoded({
     extended: true,
   })
 );
+
 
 // Connection
 
@@ -55,11 +54,10 @@ class Controller {
 
   insert(data) {
     const val = new Validate();
-
     if (
       val.isName(data.name) &&
       val.isEmail(data.email) &&
-      val.isDate(data.birth_date) &&
+      val.isBirthDate(data.birth_date) &&
       val.isNotEmpty(data.address)
     ) {
       return new Promise((resolve, reject) => {
@@ -81,16 +79,13 @@ class Controller {
 
   update(id, data) {
     const val = new Validate();
-    console.log(val.isDate(data.birth_date));
-    console.log(data.birth_date);
     if (
       val.isInteger(id) &&
       val.isName(data.name) &&
       val.isEmail(data.email) &&
-      val.isDate(data.birth_date) &&
+      val.isBirthDate(data.birth_date) &&
       val.isNotEmpty(data.address)
     ) {
-      console.log(data)
       return new Promise((resolve, reject) => {
         connection.query(
           `UPDATE patient SET name = '${data.name}', email = '${data.email}', birth_date = '${data.birth_date}', address = '${data.address}' WHERE id = ${id}`,
@@ -150,9 +145,9 @@ class Validate {
     return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
   }
 
-  isDate(date) {
+  isBirthDate(date) {
     return /^\d{4}-\d{2}-\d{2}$/.test(date);
-  };
+  }
 }
 
 //Middleware
@@ -177,40 +172,37 @@ class Validate {
 //   }
 // });
 
+
 // Routes
 
-app.post("/api/auth", (req, res) => {
+app.post('/api/auth', (req, res) => {
   const { email, password } = req.body;
 
-  email === "medcloud@gmail.com" && password === "@!010203"
-    ? jwt.sign(
-        { email },
-        "secretMedCloud",
-        { expiresIn: "3h" },
-        (err, token) => {
-          res.json({ token });
-        }
-      )
+  email === 'medcloud@gmail.com' && password === '@!010203' 
+    ? jwt.sign({ email }, "secretMedCloud", { expiresIn: "3h" }, (err, token) => {
+        res.json({ token });
+      })
     : res.status(401).json({ msg: "Usuário ou senha inválidos" });
 });
 
-app.get("/api/patients", async (req, res, next) => {
+
+app.get("/api/patient", async (req, res, next) => {
   return res.status(200).json(await controller.getAll());
 });
 
-app.get("/api/patients/:id", async (req, res, next) => {
+app.get("/api/patient/:id", async (req, res, next) => {
   return res.status(200).json(await controller.getOne(req.params.id));
 });
 
-app.post("/api/patients/", async (req, res, next) => {
+app.post("/api/patient/", async (req, res, next) => {
   return res.status(200).json(await controller.insert(req.body));
 });
 
-app.put("/api/patients/:id", async (req, res, next) => {
+app.put("/api/patient/:id", async (req, res, next) => {
   return res.status(200).json(await controller.update(req.params.id, req.body));
 });
 
-app.delete("/api/patients/:id", async (req, res, next) => {
+app.delete("/api/patient/:id", async (req, res, next) => {
   return res.status(200).json(await controller.delete(req.params.id));
 });
 
@@ -220,4 +212,4 @@ app.use((req, res, next) => {
   });
 });
 
-module.exports.patients = serverless(app);
+module.exports.patient = serverless(app);
